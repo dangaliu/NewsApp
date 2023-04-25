@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
+import com.example.newsapp.ui.NewsActivity
+import com.example.newsapp.ui.NewsViewModel
 
 class SavedNewsFragment : Fragment() {
 
     private var _binding: FragmentSavedNewsBinding? = null
     private val binding: FragmentSavedNewsBinding get() = _binding!!
+
+    private lateinit var viewModel: NewsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -19,5 +23,10 @@ class SavedNewsFragment : Fragment() {
     ): View? {
         _binding = FragmentSavedNewsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel = (requireActivity() as NewsActivity).viewModel
     }
 }
