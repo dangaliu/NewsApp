@@ -12,7 +12,10 @@ import retrofit2.Response
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    val breakingNewsPage = 1
+    var breakingNewsPage = 1
+
+    val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    var searchNewsPage = 1
 
     init {
         getBreakingNews(country = "ru")
@@ -25,7 +28,20 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         breakingNews.postValue(handleBreakingNewsResponse(response))
     }
 
+    fun searchNews(searchQuery: String) = viewModelScope.launch {
+        searchNews.postValue(Resource.Loading())
+        val response = newsRepository.searchNews(searchQuery, searchNewsPage)
+        searchNews.postValue(handledSearchNewsResponse(response))
+    }
+
     private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        response.body()?.let {
+            return Resource.Success(it)
+        }
+        return Resource.Error(response.message())
+    }
+
+    private fun handledSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         response.body()?.let {
             return Resource.Success(it)
         }
