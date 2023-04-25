@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.newsapp.ui.models.Article
 import com.example.newsapp.databinding.ItemArticlePreviewBinding
+import com.example.newsapp.ui.models.Article
 
 class ArticleAdapter : RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() {
 
@@ -42,18 +42,22 @@ class ArticleAdapter : RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         with(holder.binding) {
-            Glide.with(root.context).load(article.urlToImage).into(ivArticleImage)
+            article.urlToImage?.let {
+                Glide.with(root.context).load(it).into(ivArticleImage)
+            }
             tvTitle.text = article.title
             tvDescription.text = article.description
             tvSource.text = article.source.name
             tvPublishedAt.text = article.publishedAt
-            root.setOnClickListener {
-                onItemClickListener?.let { it(article) }
+            rootLayout.setOnClickListener {
+                onItemClickListener?.let { listener ->
+                    listener(article)
+                }
             }
         }
     }
 
     fun setOnItemClickListener(listener: (Article) -> Unit) {
-        onItemClickListener = listener
+        this.onItemClickListener = listener
     }
 }
